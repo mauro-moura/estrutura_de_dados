@@ -30,6 +30,9 @@ void print_matrix_float(float **m, int mlin_len, int mcol_len) {
 }
 
 float calculate_mean_neighbor(float **m, int i, int j, int mlin_len, int mcol_len) {
+    /*
+    Calculate the mean of 4 neighbors in a matrix considering corners of matrix.
+    */
     float v1 = 0, v2 = 0, v3 = 0, v4 = 0;
 
     if (i != (mlin_len - 1)) {
@@ -79,20 +82,24 @@ void copy_matrix(float ** dst, float ** src, int mlin_len, int mcol_len) {
 }
 
 float ** calculate_polution(int **m, int rows, int cols, float error) {
-    float **m_base;
-    float **m_out;
-    float p;
-    float diff;
-    float max_diff = 25;
-
+    /* Calculate polution given a matrix */
+    float **m_base, **m_out, **m_aux;
+    float p, diff, max_diff = 25;
+    
     m_base = allocate_matrix(rows, cols);
     fill_matrix(m_base, m, rows, cols);
     m_out = allocate_matrix(rows, cols);
     fill_matrix(m_out, m, rows, cols);
 
     while (max_diff > error) {
+        /* Old version, copying matrix
         copy_matrix(m_base, m_out, rows, cols);
         fill_matrix(m_out, m, rows, cols);
+        */
+        m_aux = m_base;
+        m_base = m_out;
+        m_out = m_aux;
+
         max_diff = 0;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -114,6 +121,7 @@ float ** calculate_polution(int **m, int rows, int cols, float error) {
 }
 
 void split_str(char *str) {
+    /* Remove spaces between string */
     int len = strlen(str);
     int j = 0;
 
@@ -126,19 +134,21 @@ void split_str(char *str) {
     str[j] = '\0';
 }
 
-void main() {
-    // Dada uma matriz onde 0: Água, 1: Terra, 2: Gerador
-    // Calcular a taxa de espalhamento de óleo
-    // O gerador sempre estará em 100
-    // A água sempre estará em 0
+int main() {
+    /*
+    Dada uma matriz onde 0: Água, 1: Terra, 2: Gerador
+    Calcular a taxa de espalhamento de óleo
+    O gerador sempre estará em 100
+    A água sempre estará em 0
+    */
 
     int rows, cols;
     char c_error[256];
-    // float error = 1;
+    /* float error = 1; */
 
     char path[256] = "./matrices/";
     char filename[256];
-    // char filename[256] = "matriz.txt";
+    /* char filename[256] = "matriz.txt"; */
 
     int **matrix;
     float **out_m;
@@ -204,4 +214,6 @@ void main() {
 
     free(matrix);
     free(out_m);
+
+    return 0;
 }
