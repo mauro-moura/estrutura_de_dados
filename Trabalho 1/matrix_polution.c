@@ -35,7 +35,7 @@ float calculate_mean_neighbor(float **m, int i, int j, int mlin_len, int mcol_le
     /*
     Calculate the mean of 4 neighbors in a matrix considering corners of matrix.
     */
-    float v1 = 0, v2 = 0, v3 = 0, v4 = 0;
+    float v1 = 0, v2 = 0, v3 = 0, v4 = 0, average = 0;
 
     if (i != (mlin_len - 1)) {
         v1 = m[i + 1][j];
@@ -50,7 +50,7 @@ float calculate_mean_neighbor(float **m, int i, int j, int mlin_len, int mcol_le
         v4 = m[i][j - 1];
     }
     
-    float average = (v1 + v2 + v3 + v4) / 4.0;
+    average = (v1 + v2 + v3 + v4) / 4.0;
 
     return average;
 }
@@ -66,8 +66,9 @@ float ** allocate_matrix(int rows, int cols) {
 }
 
 void fill_matrix(float ** matrix, int ** m, int rows, int cols) {
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
+    int i, j;
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < cols; j++) {
             matrix[i][j] = 0.0;
             if (m[i][j] == 2) {
                 matrix[i][j] = 100;
@@ -76,16 +77,9 @@ void fill_matrix(float ** matrix, int ** m, int rows, int cols) {
     }
 }
 
-void copy_matrix(float ** dst, float ** src, int mlin_len, int mcol_len) {
-    for (int i = 0; i < mlin_len; i++) {
-        for (int j = 0; j < mcol_len; j++) {
-            dst[i][j] = src[i][j];
-    }
-  }
-}
-
 float ** calculate_polution(int **m, int rows, int cols, float error) {
     /* Calculate polution given a matrix */
+    int i, j;
     float **m_base, **m_out, **m_aux;
     float p, diff, max_diff = 25;
     
@@ -95,17 +89,13 @@ float ** calculate_polution(int **m, int rows, int cols, float error) {
     fill_matrix(m_out, m, rows, cols);
 
     while (max_diff > error) {
-        /* Old version, copying matrix
-        copy_matrix(m_base, m_out, rows, cols);
-        fill_matrix(m_out, m, rows, cols);
-        */
         m_aux = m_base;
         m_base = m_out;
         m_out = m_aux;
 
         max_diff = 0;
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
+        for (i = 0; i < rows; i++) {
+            for (j = 0; j < cols; j++) {
                 if (m[i][j] != 0 && m[i][j] != 2) {
                     p = calculate_mean_neighbor(m_base, i, j, rows, cols);
                     m_out[i][j] = p;
@@ -126,9 +116,9 @@ float ** calculate_polution(int **m, int rows, int cols, float error) {
 void split_str(char *str) {
     /* Remove spaces between string */
     int len = strlen(str);
-    int j = 0;
+    int i, j = 0;
 
-    for (int i = 0; i < len; i++) {
+    for (i = 0; i < len; i++) {
         if (!isspace(str[i])) {
             str[j++] = str[i];
         } 
@@ -147,26 +137,25 @@ int main() {
 
     int i, j, rows, cols;
     char c_error[256];
-    /* float error = 1; */
+    float error;
 
-    // char path[256] = "./matrices/";
     char path[256];
-    /* char filename[256] = "matriz.txt"; */
+    char temp[256];
 
     int **matrix;
     float **out_m;
 
-    printf("Digite o nome do arquivo (Dentro da pasta ./matrices/): ");
+    FILE *file_in;
+
+    printf("Digite o nome do arquivo que contém uma martiz: ");
     scanf("%s", path);
-    // strcat(path, filename);
 
     printf("Digite o valor do erro: ");
     scanf("%s", c_error);
-    float error = atof(c_error);
+    error = atof(c_error);
 
     printf("Arquivo selecionado: %s, Erro Selecionado: %f\n", path, error);
 
-    FILE *file_in;
     file_in = fopen(path, "r");
 
     if (file_in == NULL) {
@@ -174,7 +163,6 @@ int main() {
         exit(1);
     }
 
-    char temp[256];
     fgets(temp, sizeof(temp), file_in);
     rows = atoi(temp);
 

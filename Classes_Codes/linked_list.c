@@ -5,7 +5,7 @@
 struct node {
     int iVal;
     struct node *pProx;
-} *pIni = NULL;
+};
 
 void print_list(struct node *pIni) {
     struct node *pAux;
@@ -60,9 +60,31 @@ int exclude(struct node **pIni, int iVal) {
 }
 
 int main() {
-    print_list(pIni);
-    include(&pIni, 10);
-    print_list(pIni);
+    struct node *pIni = NULL;
+    char response;
+    int response_int;
+    int RUN = 1;
+    printf("Bem vindo à listas ligadas.\n");
+    
+    while (RUN) {
+        printf("Digite a para adicionar, e para excluir ou p para imprimir: ");
+        fgets(response, sizeof(response), stdin);
+
+        switch (response) {
+            case 'a':
+                break;
+            case 'e':
+                break;
+            case 'p':
+                break;
+            default:
+                printf("Não entendi, vou perguntar novamente.");
+                continue;
+        }
+        print_list(pIni);
+        include(&pIni, 10);
+        print_list(pIni);
+    }
 
     return 0;
 }
